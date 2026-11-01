@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import Image from "next/image"
+import Link from "next/link";
 type Event = {
   _id: string;
   title: string;
@@ -78,9 +79,11 @@ export function EventCards({event}:{event : Event}) {
 
             {/* Card Footer */}
             <CardFooter>
-              <Button className="w-full">
-                View Event
-              </Button>
+              <Link href={`/upcoming-events/${event._id}`}>
+                <Button className="w-full">
+                  View Event
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
            
