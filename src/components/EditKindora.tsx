@@ -42,12 +42,25 @@ const EVENT_TYPES = [
   "Relief Distribution",
 ];
 
+type Event = {
+  
+  title: string;
+  description: string;
+  thumbnail: string;
+  location: string;
+  eventDate: string;
+  eventType: string;
+};
+
+
 const EditKindoraDialog = ({
   id,
   email,
+  event 
 }: {
   id: string;
-  email: string;
+  email: string; 
+    event: Event;
 
 }) => {
 
@@ -55,6 +68,7 @@ const EditKindoraDialog = ({
 
   const [eventType, setEventType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const today = new Date().toLocaleDateString("en-CA");
 
@@ -98,6 +112,7 @@ const EditKindoraDialog = ({
 
       toast.success("Event updated successfully");
       router.refresh();
+      setOpen(false);
     } else {
       toast.error("Event update failed");
     }
@@ -106,7 +121,7 @@ const EditKindoraDialog = ({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
           <Pencil size={16} />
@@ -128,6 +143,7 @@ const EditKindoraDialog = ({
             <Input
               id="title"
               name="title"
+                defaultValue={event.title}
               placeholder="Tree Plantation & Lake Revival"
               required
               minLength={3}
@@ -143,13 +159,14 @@ const EditKindoraDialog = ({
               required
               rows={4}
               maxLength={500}
+              defaultValue={event.description}
             />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="eventType">Event Type</Label>
 
-            <Select value={eventType} onValueChange={setEventType}>
+            <Select defaultValue={event.eventType}  onValueChange={setEventType}>
               <SelectTrigger id="eventType">
                 <SelectValue placeholder="Select event type" />
               </SelectTrigger>
@@ -172,6 +189,7 @@ const EditKindoraDialog = ({
               type="url"
               placeholder="https://example.com/event-photo.jpg"
               required
+              defaultValue={event.thumbnail}
             />
           </div>
 
@@ -183,6 +201,7 @@ const EditKindoraDialog = ({
               placeholder="Dhanmondi Lake Walkway, Dhaka"
               required
               minLength={3}
+              defaultValue={event.location}
             />
           </div>
 
@@ -194,6 +213,7 @@ const EditKindoraDialog = ({
               type="date"
               min={today}
               required
+              defaultValue={new Date(event.eventDate).toISOString().split("T")[0]}
             />
           </div>
 
