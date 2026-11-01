@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
+ import { ToastContainer} from 'react-toastify';
 
 const dmSans = DM_Sans({
   variable: "--font-sans",
@@ -40,10 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <Navbar />
+          <ToastContainer />
           <div className="flex-1">{children}</div>
           <SiteFooter />
         </ThemeProvider>
-      </body>
+      </body> 
     </html>
   );
 }

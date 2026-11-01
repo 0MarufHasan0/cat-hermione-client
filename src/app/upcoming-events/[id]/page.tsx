@@ -1,4 +1,5 @@
 
+import JoinEventButton from "@/components/JoinEventButton";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -82,9 +83,7 @@ const EventDetailsPage = async ({params,}: {params: Promise<{ id: string }>;}) =
 
             {/* Join Event Button */}
             <div className="pt-4">
-              <button className="w-full rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 sm:w-auto">
-                Join Event
-              </button>
+            <JoinEventButton event={event} />
             </div>
 
           </div>

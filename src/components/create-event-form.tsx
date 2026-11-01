@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { authClient } from "@/lib/auth-client";
 
 const EVENT_TYPES = [
   "Cleanup",
@@ -42,6 +43,10 @@ export function CreateEventForm() {
 
   const [loading, setLoading] = useState(false);
 
+    const { data: session} = authClient.useSession();
+  
+    const user = session?.user;
+
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
   ) {
@@ -67,10 +72,11 @@ export function CreateEventForm() {
       setLoading(true);
 
       // // Frontend data eksathe korlam
-      // const eventData = {
-      //   ...data,
-      //   eventType,
-      // };
+      const eventData = {
+        ...data,
+        eventType,
+        creatorEmail: user?.email,
+      };
 
       // Backend API call
       const res = await fetch("http://localhost:8000/add-kindora", {
@@ -78,7 +84,7 @@ export function CreateEventForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(eventData),
       });
 
       const result = await res.json();

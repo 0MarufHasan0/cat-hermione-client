@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreateEventForm } from "@/components/create-event-form";
 
 export const metadata = {
-  title: "Create an Event | Cat Hermione",
+  title: "Create an Event | Kindora",
 };
 
 export default function CreateEventPage() {

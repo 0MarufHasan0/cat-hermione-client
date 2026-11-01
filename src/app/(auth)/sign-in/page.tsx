@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import SignUpPage from "../sign-up/page";
+
 import { authClient } from "@/lib/auth-client";
 
 const SignInPage = () => {

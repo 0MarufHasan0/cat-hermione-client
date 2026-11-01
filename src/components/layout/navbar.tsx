@@ -179,7 +179,7 @@ export function Navbar() {
               <Link href="/create-event" className="text-blue-600 hover:underline">
                 Create Event
               </Link>
-              <Link href="/my-events" className="text-blue-600 hover:underline">
+              <Link href="/my-event" className="text-blue-600 hover:underline">
                 My Events
               </Link>
               <Button
@@ -290,7 +290,7 @@ export function Navbar() {
               <Link href="/create-event" className="text-blue-600 hover:underline">
                 Create Event
               </Link>
-              <Link href="/my-events" className="text-blue-600 hover:underline">
+              <Link href="/my-event" className="text-blue-600 hover:underline">
                 My Events
               </Link>
               <Button

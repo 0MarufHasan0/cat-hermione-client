@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     // Local SVG event thumbnails (src/data events use /events/*.svg).
     dangerouslyAllowSVG: true,
     remotePatterns: [
-      { protocol: "https", hostname: "images.pexels.com" },
+      { protocol: "https", hostname: "***" },
     ],
   },
   turbopack: {
