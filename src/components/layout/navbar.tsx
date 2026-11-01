@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 
 import {
@@ -11,6 +11,7 @@ import {
   Moon,
   Sun,
   Sparkles,
+  LogOut,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,6 +25,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
+import { authClient } from "@/lib/auth-client";
+
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import {
+  Avatar,
+  
+  AvatarFallback,
+  
+  AvatarImage,
+} from "@/components/ui/avatar"
+
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -57,24 +79,44 @@ function ThemeToggle() {
   );
 }
 
+
+
+
+
 // Main Navbar
 export function Navbar() {
+  const router = useRouter();
   const pathname = usePathname();
+
+  const { data: session, isPending } = authClient.useSession();
+
+  const user = session?.user;
+
+  // Logout Function
+  const handleLogout = async () => {
+    const { error } = await authClient.signOut();
+
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+
+    router.push("/sign-in");
+
+    
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-
           <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
             <Heart className="size-6 fill-current" />
           </span>
 
           <span className="flex flex-col">
-
             <span className="text-2xl font-extrabold tracking-tight">
               Kindora<span className="text-primary">.</span>
             </span>
@@ -82,13 +124,11 @@ export function Navbar() {
             <span className="text-[10px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
               Care • Share • Inspire
             </span>
-
           </span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 rounded-full border bg-muted/40 p-1 md:flex">
-
           {NAV_LINKS.map((link) => {
             const active = isActive(pathname, link.href);
 
@@ -108,7 +148,6 @@ export function Navbar() {
               </Link>
             );
           })}
-
         </nav>
 
         {/* Right Actions */}
@@ -116,27 +155,69 @@ export function Navbar() {
 
           <ThemeToggle />
 
-          {/* Desktop Sign In */}
-          <Button
-            render={<Link href="/sign-in" />}
-            variant="ghost"
-            className="hidden rounded-full sm:inline-flex"
-          >
-            Sign In
-          </Button>
+          {/* Desktop Auth Buttons */}
+          {!isPending && (
+            user ? (
 
-          {/* Desktop Sign Up */}
-          <Button
-            render={<Link href="/sign-up" />}
-            className="hidden rounded-full px-6 sm:inline-flex"
-          >
-            Get Started
-            <Sparkles className="ml-1 size-4" />
-          </Button>
+                <Popover>
+        <PopoverTrigger render={    <Avatar>
+        <AvatarImage
+          src={user?.image || ""}
+          alt={`@${user?.name}`}
+          className="grayscale"
+        />
+        <AvatarFallback>CN</AvatarFallback>
+
+       
+      </Avatar>} />
+       <h1 className="text-lg font-bold text-[#3a6bf0]">{user?.name}</h1>
+        <PopoverContent align="start">
+          <PopoverHeader>
+          
+            <PopoverDescription className="flex flex-col gap-2">
+              <p>{user?.email}</p>
+              <Link href="/create-event" className="text-blue-600 hover:underline">
+                Create Event
+              </Link>
+              <Link href="/my-events" className="text-blue-600 hover:underline">
+                My Events
+              </Link>
+              <Button
+                variant="outline"
+                className="w-full rounded-full"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 size-4" />
+                Logout
+              </Button>
+            </PopoverDescription>
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+              
+            ) : (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Button
+                  render={<Link href="/sign-in" />}
+                  variant="ghost"
+                  className="rounded-full"
+                >
+                  Sign In
+                </Button>
+
+                <Button
+                  render={<Link href="/sign-up" />}
+                  className="rounded-full px-6"
+                >
+                  Get Started
+                  <Sparkles className="ml-1 size-4" />
+                </Button>
+              </div>
+            )
+          )}
 
           {/* Mobile Menu */}
           <Sheet>
-
             <SheetTrigger
               render={
                 <Button
@@ -162,7 +243,6 @@ export function Navbar() {
 
               {/* Mobile Navigation */}
               <nav className="mt-8 flex flex-col gap-2 px-4">
-
                 {NAV_LINKS.map((link) => {
                   const active = isActive(pathname, link.href);
 
@@ -185,38 +265,77 @@ export function Navbar() {
                     </SheetClose>
                   );
                 })}
-
               </nav>
 
               {/* Mobile Auth Buttons */}
               <div className="absolute right-4 bottom-6 left-4 flex flex-col gap-3">
 
-                <SheetClose
-                  render={
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-full"
-                    />
-                  }
-                >
-                  <Link href="/sign-up">
-                    Sign In
-                  </Link>
-                </SheetClose>
+                {!isPending && (
+                  user ? (
+                    <>
+             <Popover>
+        <PopoverTrigger render={<Button variant="outline" className="w-fit">    <Avatar>
+        <AvatarImage
+          src={user?.image || ""}
+          alt={`@${user?.name}`}
+          className="grayscale"
+        />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar></Button>} />
+        <PopoverContent align="start">
+          <PopoverHeader>
+          
+            <PopoverDescription className="flex flex-col gap-2">
+              <p>{user?.email}</p>
+              <Link href="/create-event" className="text-blue-600 hover:underline">
+                Create Event
+              </Link>
+              <Link href="/my-events" className="text-blue-600 hover:underline">
+                My Events
+              </Link>
+              <Button
+                variant="outline"
+                className="w-full rounded-full"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 size-4" />
+                Logout
+              </Button>
+            </PopoverDescription>
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+                    </>
+                  ) : (
+                    <>
+                      <SheetClose
+                        render={
+                          <Button
+                            variant="outline"
+                            className="w-full rounded-full"
+                          />
+                        }
+                      >
+                        <Link href="/sign-in">
+                          Sign In
+                        </Link>
+                      </SheetClose>
 
-                <SheetClose
-                  render={
-                    <Button className="w-full rounded-full" />
-                  }
-                >
-                  <Link href="/sign-up">
-                    Sign Up
-                    <Sparkles className="ml-1 size-4" />
-                  </Link>
-                </SheetClose>
+                      <SheetClose
+                        render={
+                          <Button className="w-full rounded-full" />
+                        }
+                      >
+                        <Link href="/sign-up">
+                          Sign Up
+                          <Sparkles className="ml-1 inline size-4" />
+                        </Link>
+                      </SheetClose>
+                    </>
+                  )
+                )}
 
               </div>
-
             </SheetContent>
           </Sheet>
 
