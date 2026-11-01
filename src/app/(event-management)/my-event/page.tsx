@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import DeleteKindoraDialog from "@/components/DeleteKindora";
+import EditKindoraDialog from "@/components/EditKindora";
 
 type Event = {
   _id: string;
@@ -190,30 +191,27 @@ const MyKindoraPage = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-5 flex gap-3">
-                    <Link
-                      href={`/edit-kindora/${event._id}`}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-emerald-600 px-3 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-600 hover:text-white"
-                    >
-                      <Pencil size={16} />
-                      Edit
-                    </Link>
 
-                    <button className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-600 px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-600 hover:text-white">
+    <div className="mt-5 flex gap-3">
 
-                        <Trash2
-                            size={16} >
+           <div className="flex-1">
+             <EditKindoraDialog
+               id={event._id}
+               email={email!}
+             />
+           </div>         
 
-                        </Trash2>
-                       <DeleteKindoraDialog id={event._id} email={email } /> 
+           <div className="flex-1">
+             <DeleteKindoraDialog
+               id={event._id}
+               email={email!}
+             />
+           </div>         
 
+      </div>         
 
-                    </button>
-                    
-                    
-                  </div>
-                </div>
-              </div>
+                         </div>
+                       </div>
             ))}
           </div>
         )}
