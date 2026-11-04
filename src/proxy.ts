@@ -1,18 +1,28 @@
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { auth } from "./lib/auth";
 
-export function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
+export async function proxy(request: NextRequest) {
+  // Better Auth দিয়ে session check
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-  if (!sessionCookie) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+  console.log("Session from server:", session);
+
+  // User login না থাকলে sign-in page-এ পাঠাবে
+  if (!session) {
+    return NextResponse.redirect(
+      new URL("/sign-in", request.url)
+    );
   }
 
+  // User login থাকলে requested page-এ যেতে দেবে
   return NextResponse.next();
 }
 
-// Pages that require a logged-in user
+// Protected routes
 export const config = {
   matcher: [
     "/upcoming-events/:path*",

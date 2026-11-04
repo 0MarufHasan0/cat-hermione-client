@@ -1,6 +1,8 @@
 
 import JoinEventButton from "@/components/JoinEventButton";
+import { auth } from "@/lib/auth";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
+import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,7 +13,21 @@ const EventDetailsPage = async ({
 }) => {
   const { id } = await params;
 
-  const response = await fetch(`http://localhost:8000/kindora/${id}`);
+  // Get the session from the server jwt token
+
+  const jwtToken= await auth.api.getToken({
+   headers : await headers() // you need to pass the headers object.
+  })
+
+  // console.log("Token from server:", jwtToken.token);
+
+  const response = await fetch(`http://localhost:8000/kindora/${id}` ,{
+
+    headers : {
+
+      authorization: `Bearer ${jwtToken?.token}` // Pass the token in the Authorization header
+    } 
+});
 
   const event = await response.json();
 
