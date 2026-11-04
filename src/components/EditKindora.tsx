@@ -111,7 +111,8 @@ const EditKindoraDialog = ({
     if (res.ok && data.modifiedCount > 0) {
 
       toast.success("Event updated successfully");
-      router.refresh();
+      router.push('/upcoming-events');
+      
       setOpen(false);
     } else {
       toast.error("Event update failed");

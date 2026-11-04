@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
-import { cn } from "cn";
+import React, { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,8 @@ const EVENT_TYPES = [
   "Relief Distribution",
 ];
 
-const inputClasses = "w-full";
+const inputClasses =
+  "w-full border-slate-200 focus-visible:ring-orange-500 dark:border-slate-700";
 
 export function CreateEventForm() {
   const [eventType, setEventType] = useState<string | null>(null);
@@ -43,9 +44,16 @@ export function CreateEventForm() {
 
   const [loading, setLoading] = useState(false);
 
-    const { data: session} = authClient.useSession();
-  
-    const user = session?.user;
+  const { data: session } = authClient.useSession();
+
+  const user = session?.user;
+
+  // Today's date in YYYY-MM-DD format
+  const today = new Date();
+
+  const minDate = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
@@ -68,10 +76,21 @@ export function CreateEventForm() {
       return;
     }
 
+    // Date validation
+    const selectedDate = data.eventDate as string;
+
+    if (!selectedDate || selectedDate < minDate) {
+      setMessage({
+        type: "error",
+        text: "Please select today or a future event date.",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // // Frontend data eksathe korlam
+      // Frontend data together
       const eventData = {
         ...data,
         eventType,
@@ -120,10 +139,17 @@ export function CreateEventForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid gap-5 p-6"
+      className="grid gap-6 p-5 sm:p-7"
     >
+      {/* Title */}
       <div className="grid gap-2">
-        <Label htmlFor="title">Title</Label>
+        <Label
+          htmlFor="title"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
+          Event Title
+        </Label>
+
         <Input
           id="title"
           name="title"
@@ -134,8 +160,15 @@ export function CreateEventForm() {
         />
       </div>
 
+      {/* Description */}
       <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
+        <Label
+          htmlFor="description"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
+          Description
+        </Label>
+
         <Textarea
           id="description"
           name="description"
@@ -143,12 +176,18 @@ export function CreateEventForm() {
           required
           rows={4}
           maxLength={500}
-          className={inputClasses}
+          className={cn(inputClasses, "resize-none")}
         />
       </div>
 
+      {/* Event Type */}
       <div className="grid gap-2">
-        <Label htmlFor="eventType">Event Type</Label>
+        <Label
+          htmlFor="eventType"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
+          Event Type
+        </Label>
 
         <Select
           value={eventType ?? ""}
@@ -157,7 +196,7 @@ export function CreateEventForm() {
           <SelectTrigger
             id="eventType"
             aria-label="Event type"
-            className={cn(inputClasses, "h-9")}
+            className={cn(inputClasses, "h-10")}
           >
             <SelectValue placeholder="Select event type" />
           </SelectTrigger>
@@ -171,17 +210,22 @@ export function CreateEventForm() {
           </SelectContent>
         </Select>
 
-        {message?.type === "error" && (
-          <p className="text-sm font-medium text-destructive">
+        {message?.type === "error" && !eventType && (
+          <p className="text-sm font-medium text-red-600">
             {message.text}
           </p>
         )}
       </div>
 
+      {/* Thumbnail */}
       <div className="grid gap-2">
-        <Label htmlFor="thumbnail">
+        <Label
+          htmlFor="thumbnail"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
           Thumbnail Image URL
         </Label>
+
         <Input
           id="thumbnail"
           name="thumbnail"
@@ -192,8 +236,15 @@ export function CreateEventForm() {
         />
       </div>
 
+      {/* Location */}
       <div className="grid gap-2">
-        <Label htmlFor="location">Location</Label>
+        <Label
+          htmlFor="location"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
+          Location
+        </Label>
+
         <Input
           id="location"
           name="location"
@@ -204,33 +255,43 @@ export function CreateEventForm() {
         />
       </div>
 
+      {/* Event Date */}
       <div className="grid gap-2">
-        <Label htmlFor="eventDate">Event Date</Label>
+        <Label
+          htmlFor="eventDate"
+          className="font-semibold text-slate-700 dark:text-slate-200"
+        >
+          Event Date
+        </Label>
+
         <Input
           id="eventDate"
           name="eventDate"
           type="date"
+          min={minDate}
           required
           className={inputClasses}
         />
       </div>
 
+      {/* Submit Button */}
       <Button
         type="submit"
         size="lg"
         disabled={loading}
-        className="mt-1 rounded-full h-11"
+        className="mt-1 h-12 rounded-full bg-orange-600 font-semibold text-white shadow-sm transition-all hover:bg-orange-700"
       >
         {loading ? "Creating..." : "Create Event"}
       </Button>
 
+      {/* Success / Error Message */}
       {message && (
         <p
           role="status"
           className={`rounded-lg border px-4 py-3 text-sm font-medium ${
             message.type === "success"
-              ? "border-primary/20 bg-primary/5 text-primary"
-              : "border-destructive/20 bg-destructive/5 text-destructive"
+              ? "border-orange-200 bg-orange-50 text-orange-700"
+              : "border-red-200 bg-red-50 text-red-600"
           }`}
         >
           {message.text}

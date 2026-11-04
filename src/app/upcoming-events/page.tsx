@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { EventCards } from "@/components/eventcard";
+import { SlidersHorizontal, CalendarDays } from "lucide-react";
 
 type Event = {
   _id: string;
@@ -36,26 +37,15 @@ const UpcomingEvent = () => {
   // Event data
   const [eventData, setEventData] = useState<Event[]>([]);
 
-  // console.log("1. Current Category:", category);
-
   // API call
   useEffect(() => {
-    // console.log("2. useEffect Started!");
-    // console.log("3. Selected Category:", category);
-
     const getEvents = async () => {
       const apiUrl = category
         ? `http://localhost:8000/events?category=${encodeURIComponent(category)}`
         : "http://localhost:8000/events";
 
-      // console.log("4. API URL:", apiUrl);
-
       const res = await fetch(apiUrl);
-      // console.log("5. API Response Status:", res.status);
-
       const data = await res.json();
-
-      // console.log("6. Received Data:", data);
 
       setEventData(data);
     };
@@ -63,56 +53,99 @@ const UpcomingEvent = () => {
     getEvents();
   }, [category]);
 
-  // console.log("7. Event Data:", eventData);
-
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <section className="min-h-screen bg-white px-4 py-14 dark:bg-slate-950">
+      <div className="mx-auto max-w-7xl">
 
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Upcoming Events
-        </h2>
+        {/* Heading */}
+        <div className="mb-10 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 dark:border-orange-900 dark:bg-orange-950/30 dark:text-orange-400">
+            <CalendarDays className="size-4" />
+            Make a Difference Together
+          </div>
 
-        <p className="mt-2 text-muted-foreground">
-          Discover events and join us to make a difference.
-        </p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+            Upcoming{" "}
+            <span className="text-orange-600">Events</span>
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400">
+            Discover meaningful community events, connect with volunteers,
+            and join us to make a positive difference.
+          </p>
+        </div>
+
+        {/* Category Filter */}
+        <div className="mb-10 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-800 dark:bg-slate-900">
+
+          <div className="mb-5 flex items-center gap-2">
+            <SlidersHorizontal className="size-5 text-orange-600" />
+
+            <h3 className="font-semibold text-slate-900 dark:text-white">
+              Explore by Category
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+
+            {/* All Events Button */}
+            <button
+              onClick={() => setCategory("")}
+              className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                category === ""
+                  ? "border-orange-600 bg-orange-600 text-white shadow-md shadow-orange-600/20"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-orange-950/30"
+              }`}
+            >
+              All Events
+            </button>
+
+            {/* Category Buttons */}
+            {eventTypes.map((type) => (
+              <button
+                key={type}
+                onClick={() => setCategory(type)}
+                className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  category === type
+                    ? "border-orange-600 bg-orange-600 text-white shadow-md shadow-orange-600/20"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-orange-950/30"
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+
+          </div>
+        </div>
+
+        {/* Selected Category */}
+        {category && (
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Showing category:{" "}
+              <span className="font-semibold text-orange-600">
+                {category}
+              </span>
+            </p>
+
+            <button
+              onClick={() => setCategory("")}
+              className="text-sm font-semibold text-orange-600 transition-colors hover:text-orange-700"
+            >
+              Clear Filter
+            </button>
+          </div>
+        )}
+
+        {/* Event Cards */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {eventData.map((event) => (
+            <EventCards key={event._id} event={event} />
+          ))}
+        </div>
+
       </div>
-
-      {/* Category Buttons */}
-      <div className="flex flex-wrap gap-3 mb-8">
-  <button
-    onClick={() => setCategory("")}
-    className={`px-4 py-2 rounded-md ${
-      category === ""
-        ? "bg-black text-white"
-        : "bg-gray-200 text-black"
-    }`}
-  >
-    All Events
-  </button>
-
-  {eventTypes.map((type) => (
-    <button
-      key={type}
-      onClick={() => setCategory(type)}
-      className={`px-4 py-2 rounded-md ${
-        category === type
-          ? "bg-black text-white"
-          : "bg-gray-200 text-black"
-      }`}
-    >
-      {type}
-    </button>
-  ))}
-</div>
-      {/* Event Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {eventData.map((event) => (
-          <EventCards key={event._id} event={event} />
-        ))}
-      </div>
-
-    </div>
+    </section>
   );
 };
 

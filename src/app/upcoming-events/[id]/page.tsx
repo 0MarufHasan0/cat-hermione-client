@@ -1,95 +1,122 @@
 
 import JoinEventButton from "@/components/JoinEventButton";
+import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const EventDetailsPage = async ({params,}: {params: Promise<{ id: string }>;}) => {
+const EventDetailsPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
   const { id } = await params;
 
-  const response = await fetch(
-    `http://localhost:8000/kindora/${id}`
-  );
+  const response = await fetch(`http://localhost:8000/kindora/${id}`);
 
   const event = await response.json();
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-10">
+    <main className="min-h-screen bg-slate-50 px-4 py-10 dark:bg-slate-950">
       <div className="mx-auto max-w-5xl">
 
+        {/* Back Button */}
         <Link
           href="/upcoming-events"
-          className="mb-6 inline-block text-blue-600 hover:underline"
+          className="mb-6 inline-flex items-center gap-2 font-medium text-slate-600 transition-colors hover:text-orange-600 dark:text-slate-400"
         >
-          ← Back to Events
+          <ArrowLeft className="size-4" />
+          Back to Events
         </Link>
 
-        <div className="overflow-hidden rounded-xl bg-white shadow-md">
+        {/* Event Details Card */}
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 
           {/* Event Image */}
-          <div className="relative h-[300px] w-full sm:h-[450px]">
+          <div className="relative h-[280px] w-full sm:h-[420px]">
             <Image
               src={event.thumbnail}
               alt={event.title}
-            fill
+              fill
               unoptimized
-              objectFit="cover"
+              className="object-cover"
             />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+            <span className="absolute bottom-5 left-5 rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700">
+              {event.eventType}
+            </span>
           </div>
 
           {/* Event Information */}
-          <div className="space-y-5 p-6 sm:p-8">
+          <div className="space-y-7 p-6 sm:p-10">
 
+            {/* Title */}
             <div>
-              <span className="rounded-full bg-green-100 px-4 py-2 text-sm text-green-700">
-                {event.eventType}
-              </span>
+              <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-orange-600">
+                Kindora Community Event
+              </p>
 
-              <h1 className="mt-5 text-2xl font-bold text-gray-800 sm:text-3xl">
+              <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-4xl dark:text-white">
                 {event.title}
               </h1>
             </div>
 
-            <div className="grid gap-4 border-y py-5 sm:grid-cols-2">
+            {/* Event Date & Location */}
+            <div className="grid gap-4 border-y border-slate-200 py-6 sm:grid-cols-2 dark:border-slate-800">
 
-              <div>
-                <p className="text-sm text-gray-500">
-                  Event Date
-                </p>
-                <p className="mt-1 font-medium text-gray-800">
-                  {event.eventDate}
-                </p>
+              <div className="flex items-start gap-4 rounded-xl bg-orange-50/70 p-4 dark:bg-orange-950/20">
+                <div className="rounded-lg bg-white p-3 text-orange-600 shadow-sm dark:bg-slate-800">
+                  <CalendarDays className="size-5" />
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Event Date
+                  </p>
+                  <p className="mt-1 font-semibold text-slate-900 dark:text-white">
+                    {event.eventDate}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <p className="text-sm text-gray-500">
-                  Location
-                </p>
-                <p className="mt-1 font-medium text-gray-800">
-                  {event.location}
-                </p>
+              <div className="flex items-start gap-4 rounded-xl bg-orange-50/70 p-4 dark:bg-orange-950/20">
+                <div className="rounded-lg bg-white p-3 text-orange-600 shadow-sm dark:bg-slate-800">
+                  <MapPin className="size-5" />
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Location
+                  </p>
+                  <p className="mt-1 font-semibold text-slate-900 dark:text-white">
+                    {event.location}
+                  </p>
+                </div>
               </div>
 
             </div>
 
+            {/* Event Description */}
             <div>
-              <h2 className="mb-3 text-xl font-semibold text-gray-800">
+              <h2 className="mb-4 text-xl font-bold text-slate-900 sm:text-2xl dark:text-white">
                 About This Event
               </h2>
 
-              <p className="leading-8 text-gray-600">
+              <p className="text-base leading-8 text-slate-600 dark:text-slate-400">
                 {event.description}
               </p>
             </div>
 
             {/* Join Event Button */}
-            <div className="pt-4">
-            <JoinEventButton event={event} />
+            <div className="border-t border-slate-200 pt-6 dark:border-slate-800">
+              <JoinEventButton event={event} />
             </div>
 
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

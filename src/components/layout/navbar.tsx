@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
 
 import {
   Heart,
@@ -12,9 +14,13 @@ import {
   Sun,
   Sparkles,
   LogOut,
+  ArrowRight,
+  CalendarPlus,
+  ClipboardList,
+  CalendarDays,
+  ChevronRight,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -26,36 +32,46 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { authClient } from "@/lib/auth-client";
-
-
 import {
   Popover,
   PopoverContent,
   PopoverDescription,
   PopoverHeader,
-
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
 import {
   Avatar,
-  
   AvatarFallback,
-  
   AvatarImage,
-} from "@/components/ui/avatar"
-
+} from "@/components/ui/avatar";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Events", href: "/upcoming-events" },
+  { label: "Upcoming Events", href: "/upcoming-events" },
   { label: "About Us", href: "/about" },
   { label: "Gallery", href: "/gallery" },
   { label: "Contact", href: "/contact" },
 ];
 
-// Active Route Check
+const PROFILE_LINKS = [
+  {
+    label: "Create Event",
+    href: "/create-event",
+    icon: CalendarPlus,
+  },
+  {
+    label: "Manage Events",
+    href: "/my-event",
+    icon: ClipboardList,
+  },
+  {
+    label: "Joined Events",
+    href: "/join-event",
+    icon: CalendarDays,
+  },
+];
+
 function isActive(pathname: string, href: string) {
   return href === "/"
     ? pathname === "/"
@@ -71,64 +87,177 @@ function ThemeToggle() {
       variant="ghost"
       size="icon"
       aria-label="Toggle theme"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() =>
+        setTheme(theme === "dark" ? "light" : "dark")
+      }
+      className="size-9 rounded-full text-slate-700 transition-colors hover:bg-orange-50 hover:text-orange-600 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-orange-400"
     >
-      <Sun className="hidden size-5 dark:block" />
-      <Moon className="size-5 dark:hidden" />
+      <Sun className="hidden size-4 dark:block" />
+      <Moon className="size-4 dark:hidden" />
     </Button>
   );
 }
 
+// Profile Dropdown
+function ProfileMenu({
+  user,
+  handleLogout,
+}: {
+  user: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+  handleLogout: () => Promise<void>;
+}) {
+  const pathname = usePathname();
 
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="ghost"
+            aria-label="Open profile menu"
+            className="flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-2 transition-all hover:border-orange-300 hover:bg-orange-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
+          />
+        }
+      >
+        <Avatar className="size-8 border-2 border-orange-200">
+          <AvatarImage
+            src={user.image || ""}
+            alt={user.name || "User"}
+          />
+          <AvatarFallback className="bg-orange-100 font-semibold text-orange-700">
+            {user.name?.charAt(0)?.toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
 
+        <span className="hidden max-w-28 truncate text-sm font-semibold text-slate-800 dark:text-slate-100 sm:block">
+          {user.name}
+        </span>
+      </PopoverTrigger>
 
+      <PopoverContent
+        align="end"
+        className="w-72 rounded-2xl border border-slate-200 bg-white p-3 text-slate-900 shadow-xl dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+      >
+        {/* Profile Info */}
+        <PopoverHeader className="p-2">
+          <PopoverDescription className="flex items-center gap-3">
+            <Avatar className="size-11 border-2 border-orange-200">
+              <AvatarImage
+                src={user.image || ""}
+                alt={user.name || "User"}
+              />
+              <AvatarFallback className="bg-orange-100 font-bold text-orange-700">
+                {user.name?.charAt(0)?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
 
-// Main Navbar
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                {user.name}
+              </span>
+
+              <span className="break-all text-xs text-slate-500 dark:text-slate-400">
+                {user.email}
+              </span>
+            </div>
+          </PopoverDescription>
+        </PopoverHeader>
+
+        <div className="my-3 h-px bg-slate-200 dark:bg-slate-800" />
+
+        {/* Profile Navigation */}
+        <div className="flex flex-col gap-1">
+          {PROFILE_LINKS.map((item) => {
+            const active = isActive(pathname, item.href);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                  active
+                    ? "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                )}
+              >
+                <span className="flex items-center gap-3">
+                  <Icon
+                    className={cn(
+                      "size-4 transition-colors",
+                      active
+                        ? "text-orange-600 dark:text-orange-400"
+                        : "text-slate-400 group-hover:text-orange-600"
+                    )}
+                  />
+                  {item.label}
+                </span>
+
+                {active && (
+                  <ChevronRight className="size-4 text-orange-600 dark:text-orange-400" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="my-3 h-px bg-slate-200 dark:bg-slate-800" />
+
+        {/* Logout */}
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="h-10 w-full justify-start rounded-xl px-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/40"
+        >
+          <LogOut className="mr-3 size-4" />
+          Logout
+        </Button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
 
   const { data: session, isPending } = authClient.useSession();
-
   const user = session?.user;
 
-  // Logout Function
   const handleLogout = async () => {
     const { error } = await authClient.signOut();
 
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
       return;
     }
 
     router.push("/sign-in");
-
-    
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-white">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-            <Heart className="size-6 fill-current" />
+        <Link href="/" className="flex shrink-0 items-center gap-2">
+          <span className="flex size-9 items-center justify-center rounded-lg bg-orange-600 text-white">
+            <Heart className="size-5 fill-current" />
           </span>
 
-          <span className="flex flex-col">
-            <span className="text-2xl font-extrabold tracking-tight">
-              Kindora<span className="text-primary">.</span>
-            </span>
-
-            <span className="text-[10px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
-              Care • Share • Inspire
-            </span>
+          <span className="text-xl font-extrabold tracking-tight sm:text-2xl">
+            Kindora<span className="text-orange-600">.</span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 rounded-full border bg-muted/40 p-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => {
             const active = isActive(pathname, link.href);
 
@@ -138,10 +267,10 @@ export function Navbar() {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-all",
+                  "rounded-full px-3 py-2 text-sm font-medium transition-all xl:px-4",
                   active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-background hover:text-foreground"
+                    ? "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-orange-600 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-orange-400"
                 )}
               >
                 {link.label}
@@ -150,94 +279,70 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2">
-
+        {/* Desktop Actions */}
+        <div className="hidden items-center gap-2 lg:flex">
           <ThemeToggle />
 
-          {/* Desktop Auth Buttons */}
-          {!isPending && (
-            user ? (
-
-                <Popover>
-        <PopoverTrigger render={    <Avatar>
-        <AvatarImage
-          src={user?.image || ""}
-          alt={`@${user?.name}`}
-          className="grayscale"
-        />
-        <AvatarFallback>CN</AvatarFallback>
-
-       
-      </Avatar>} />
-       <h1 className="text-lg font-bold text-[#3a6bf0]">{user?.name}</h1>
-        <PopoverContent align="start">
-          <PopoverHeader>
-          
-            <PopoverDescription className="flex flex-col gap-2">
-              <p>{user?.email}</p>
-              <Link href="/create-event" className="text-blue-600 hover:underline">
-                Create Event
-              </Link>
-              <Link href="/my-event" className="text-blue-600 hover:underline">
-                My Events
-              </Link>
-              <Button
-                variant="outline"
-                className="w-full rounded-full"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 size-4" />
-                Logout
-              </Button>
-            </PopoverDescription>
-          </PopoverHeader>
-        </PopoverContent>
-      </Popover>
-              
+          {!isPending &&
+            (user ? (
+              <ProfileMenu
+                user={user}
+                handleLogout={handleLogout}
+              />
             ) : (
-              <div className="hidden items-center gap-2 sm:flex">
-                <Button
-                  render={<Link href="/sign-in" />}
-                  variant="ghost"
-                  className="rounded-full"
-                >
-                  Sign In
-                </Button>
+              <Button
+                render={<Link href="/sign-in" />}
+                variant="ghost"
+                className="rounded-full text-slate-800 hover:bg-orange-50 hover:text-orange-600 dark:text-white dark:hover:bg-slate-800"
+              >
+                Login
+              </Button>
+            ))}
 
-                <Button
-                  render={<Link href="/sign-up" />}
-                  className="rounded-full px-6"
-                >
-                  Get Started
-                  <Sparkles className="ml-1 size-4" />
-                </Button>
-              </div>
-            )
+          <Button
+            render={<Link href="/upcoming-events" />}
+            className="rounded-full bg-orange-600 px-5 font-semibold text-white shadow-sm transition-colors hover:bg-orange-700"
+          >
+            Explore Events
+            <ArrowRight className="ml-1 size-4" />
+          </Button>
+        </div>
+
+        {/* Mobile Actions */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <ThemeToggle />
+
+          {!isPending && user && (
+            <ProfileMenu
+              user={user}
+              handleLogout={handleLogout}
+            />
           )}
 
-          {/* Mobile Menu */}
           <Sheet>
             <SheetTrigger
               render={
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  aria-label="Open menu"
-                  className="rounded-xl md:hidden"
+                  aria-label="Open navigation menu"
+                  className="rounded-full text-slate-800 hover:bg-orange-50 hover:text-orange-600 dark:text-white dark:hover:bg-slate-800"
                 />
               }
             >
               <Menu className="size-5" />
             </SheetTrigger>
 
-            <SheetContent side="right" className="w-80">
-
-              {/* Mobile Logo */}
+            <SheetContent
+              side="right"
+              className="w-[300px] border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-white sm:w-[350px]"
+            >
               <SheetHeader>
-                <SheetTitle className="flex items-center gap-2 text-xl">
-                  <Heart className="size-6 fill-primary text-primary" />
-                  Kindora
+                <SheetTitle className="flex items-center gap-2 text-left text-xl text-slate-900 dark:text-white">
+                  <span className="flex size-8 items-center justify-center rounded-lg bg-orange-600 text-white">
+                    <Heart className="size-5 fill-current" />
+                  </span>
+                  Kindora<span className="text-orange-600">.</span>
                 </SheetTitle>
               </SheetHeader>
 
@@ -250,95 +355,110 @@ export function Navbar() {
                     <SheetClose
                       key={link.href}
                       render={<Link href={link.href} />}
+                      className={cn(
+                        "rounded-xl px-4 py-3 text-sm font-medium transition-all",
+                        active
+                          ? "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-orange-600 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-orange-400"
+                      )}
                     >
-                      <span
-                        aria-current={active ? "page" : undefined}
-                        className={cn(
-                          "block rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
-                          active
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )}
-                      >
-                        {link.label}
-                      </span>
+                      {link.label}
                     </SheetClose>
                   );
                 })}
               </nav>
 
-              {/* Mobile Auth Buttons */}
-              <div className="absolute right-4 bottom-6 left-4 flex flex-col gap-3">
-
-                {!isPending && (
-                  user ? (
+              {/* Mobile User Actions */}
+              <div className="absolute right-6 bottom-6 left-6 flex flex-col gap-3">
+                {!isPending &&
+                  (user ? (
                     <>
-             <Popover>
-        <PopoverTrigger render={<Button variant="outline" className="w-fit">    <Avatar>
-        <AvatarImage
-          src={user?.image || ""}
-          alt={`@${user?.name}`}
-          className="grayscale"
-        />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar></Button>} />
-        <PopoverContent align="start">
-          <PopoverHeader>
-          
-            <PopoverDescription className="flex flex-col gap-2">
-              <p>{user?.email}</p>
-              <Link href="/create-event" className="text-blue-600 hover:underline">
-                Create Event
-              </Link>
-              <Link href="/my-event" className="text-blue-600 hover:underline">
-                My Events
-              </Link>
-              <Button
-                variant="outline"
-                className="w-full rounded-full"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 size-4" />
-                Logout
-              </Button>
-            </PopoverDescription>
-          </PopoverHeader>
-        </PopoverContent>
-      </Popover>
+                      {/* Mobile Profile Info */}
+                      <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900">
+                        <Avatar className="size-10 border-2 border-orange-200">
+                          <AvatarImage
+                            src={user.image || ""}
+                            alt={user.name || "User"}
+                          />
+                          <AvatarFallback className="bg-orange-100 font-semibold text-orange-700">
+                            {user.name?.charAt(0)?.toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold">
+                            {user.name}
+                          </p>
+
+                          <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Mobile Profile Links */}
+                      {PROFILE_LINKS.map((item) => {
+                        const active = isActive(pathname, item.href);
+                        const Icon = item.icon;
+
+                        return (
+                          <SheetClose
+                            key={item.href}
+                            render={<Link href={item.href} />}
+                            className={cn(
+                              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                              active
+                                ? "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-400"
+                                : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            {item.label}
+                            {active && (
+                              <ChevronRight className="ml-auto size-4" />
+                            )}
+                          </SheetClose>
+                        );
+                      })}
+
+                      <Button
+                        variant="outline"
+                        onClick={handleLogout}
+                        className="w-full rounded-xl border-red-200 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:bg-slate-950 dark:hover:bg-red-950"
+                      >
+                        <LogOut className="mr-2 size-4" />
+                        Logout
+                      </Button>
                     </>
                   ) : (
                     <>
                       <SheetClose
-                        render={
-                          <Button
-                            variant="outline"
-                            className="w-full rounded-full"
-                          />
-                        }
+                        render={<Link href="/sign-in" />}
+                        className="flex h-10 items-center justify-center rounded-xl border border-slate-200 text-sm font-medium transition-colors hover:bg-slate-100 dark:border-slate-800 dark:hover:bg-slate-800"
                       >
-                        <Link href="/sign-in">
-                          Sign In
-                        </Link>
+                        Login
                       </SheetClose>
 
                       <SheetClose
-                        render={
-                          <Button className="w-full rounded-full" />
-                        }
+                        render={<Link href="/sign-up" />}
+                        className="flex h-10 items-center justify-center gap-2 rounded-xl bg-orange-600 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
                       >
-                        <Link href="/sign-up">
-                          Sign Up
-                          <Sparkles className="ml-1 inline size-4" />
-                        </Link>
+                        Get Started
+                        <Sparkles className="size-4" />
                       </SheetClose>
                     </>
-                  )
-                )}
+                  ))}
 
+                <SheetClose
+                  render={<Link href="/upcoming-events" />}
+                  className="flex h-10 items-center justify-center gap-2 rounded-xl bg-orange-600 text-sm font-semibold text-white transition-colors hover:bg-orange-700"
+                >
+                  Explore Events
+                  <ArrowRight className="size-4" />
+                </SheetClose>
               </div>
             </SheetContent>
           </Sheet>
-
         </div>
       </div>
     </header>

@@ -27,7 +27,7 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,53 +56,70 @@ const SignUpPage = () => {
     });
 
     if (error) {
+      toast.error(error.message);
       console.log(error.message);
       return;
     }
 
-   if(data) {
-    await authClient.signOut({
-   fetchOptions: {
-    onSuccess: () => {
-      router.push("/sign-in"); // redirect to login page
-    },
-  },
-});
-   }
+    if (data) {
+      toast.success("Account created successfully!");
+
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/sign-in");
+          },
+        },
+      });
+    }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-      <Card className="w-full max-w-md border shadow-lg">
-        <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-            <UserRound size={28} />
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-950">
+
+      <Card className="w-full max-w-md overflow-hidden border-slate-200 bg-white shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+
+        <CardHeader className="space-y-4 px-6 pt-8 text-center sm:px-8">
+
+          {/* Logo Icon */}
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 dark:bg-orange-950 dark:text-orange-400">
+            <UserRound size={30} />
           </div>
 
-          <CardTitle className="text-2xl font-bold">
-            Join Kindora
-          </CardTitle>
+          <div className="space-y-2">
+            <CardTitle className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Join <span className="text-orange-600">Kindora</span>
+            </CardTitle>
 
-          <CardDescription>
-            Create your account and become part of a better community.
-          </CardDescription>
+            <CardDescription className="text-sm leading-6 text-slate-500 dark:text-slate-400">
+              Create your account and become part of a better community.
+            </CardDescription>
+          </div>
+
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-6 pb-8 sm:px-8">
+
           {/* Sign Up Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+
             {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label
+                htmlFor="name"
+                className="font-semibold text-slate-700 dark:text-slate-200"
+              >
+                Full Name
+              </Label>
 
               <div className="relative">
-                <UserRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <UserRound className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
 
                 <Input
                   id="name"
                   name="name"
                   placeholder="Enter your full name"
-                  className="pl-10"
+                  className="border-slate-200 pl-10 focus-visible:ring-orange-500 dark:border-slate-700"
                   required
                 />
               </div>
@@ -110,17 +127,22 @@ const SignUpPage = () => {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label
+                htmlFor="email"
+                className="font-semibold text-slate-700 dark:text-slate-200"
+              >
+                Email Address
+              </Label>
 
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
 
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   placeholder="example@gmail.com"
-                  className="pl-10"
+                  className="border-slate-200 pl-10 focus-visible:ring-orange-500 dark:border-slate-700"
                   required
                 />
               </div>
@@ -128,17 +150,22 @@ const SignUpPage = () => {
 
             {/* Profile Image */}
             <div className="space-y-2">
-              <Label htmlFor="image">Profile Image URL</Label>
+              <Label
+                htmlFor="image"
+                className="font-semibold text-slate-700 dark:text-slate-200"
+              >
+                Profile Image URL
+              </Label>
 
               <div className="relative">
-                <ImageIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <ImageIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
 
                 <Input
                   id="image"
                   name="image"
                   type="url"
                   placeholder="https://example.com/image.jpg"
-                  className="pl-10"
+                  className="border-slate-200 pl-10 focus-visible:ring-orange-500 dark:border-slate-700"
                   required
                 />
               </div>
@@ -146,17 +173,22 @@ const SignUpPage = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label
+                htmlFor="password"
+                className="font-semibold text-slate-700 dark:text-slate-200"
+              >
+                Password
+              </Label>
 
               <div className="relative">
-                <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
 
                 <Input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="px-10"
+                  className="border-slate-200 px-10 focus-visible:ring-orange-500 dark:border-slate-700"
                   minLength={8}
                   required
                 />
@@ -164,7 +196,7 @@ const SignUpPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-3 text-slate-400 transition hover:text-orange-600"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -179,28 +211,29 @@ const SignUpPage = () => {
             {/* Sign Up Button */}
             <Button
               type="submit"
-              className="w-full bg-emerald-600 hover:bg-emerald-700"
+              className="h-11 w-full bg-orange-600 font-semibold text-white shadow-sm transition hover:bg-orange-700"
             >
               Create Account
             </Button>
+
           </form>
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
-            <Separator className="flex-1" />
+            <Separator className="flex-1 bg-slate-200 dark:bg-slate-700" />
 
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs font-medium text-slate-400">
               OR CONTINUE WITH
             </span>
 
-            <Separator className="flex-1" />
+            <Separator className="flex-1 bg-slate-200 dark:bg-slate-700" />
           </div>
 
           {/* Google Login */}
           <Button
             type="button"
             variant="outline"
-            className="w-full gap-3"
+            className="h-11 w-full gap-3 border-slate-200 font-semibold text-slate-700 transition hover:border-orange-200 hover:bg-orange-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
             onClick={async () => {
               await authClient.signIn.social({
                 provider: "google",
@@ -231,15 +264,17 @@ const SignUpPage = () => {
           </Button>
 
           {/* Sign In Link */}
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
             Already have an account?{" "}
+
             <Link
               href="/sign-in"
-              className="font-semibold text-emerald-600 hover:underline"
+              className="font-semibold text-orange-600 transition hover:text-orange-700 hover:underline"
             >
               Sign In
             </Link>
           </p>
+
         </CardContent>
       </Card>
     </div>

@@ -65,11 +65,11 @@ const MyKindoraPage = () => {
 
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-gray-50 dark:bg-gray-950">
+      <div className="flex min-h-[60vh] items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600" />
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-orange-100 border-t-orange-600" />
 
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
             Loading your events...
           </p>
         </div>
@@ -78,29 +78,29 @@ const MyKindoraPage = () => {
   }
 
   return (
-    <section className="min-h-screen bg-gray-50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-slate-50 px-4 py-12 dark:bg-slate-950 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}
-        <div className="mb-10 flex flex-col justify-between gap-5 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900 sm:flex-row sm:items-center sm:p-8">
+        <div className="mb-10 flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:p-8">
 
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               My Events
             </h1>
 
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               Manage and keep track of the events you have created.
             </p>
 
-            <p className="mt-3 text-xs text-gray-400">
+            <p className="mt-3 text-xs text-slate-400">
               Logged in as: {email}
             </p>
           </div>
 
           <Link
-            href="/create-kindora"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            href="/create-event"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-700"
           >
             <Plus size={18} />
             Create New Event
@@ -112,17 +112,17 @@ const MyKindoraPage = () => {
         <div className="mb-6 flex items-center justify-between">
 
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               Your Events
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               All the events you have created.
             </p>
           </div>
 
-          <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-2 dark:border-emerald-900 dark:bg-emerald-950">
-            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+          <div className="rounded-lg border border-orange-100 bg-orange-50 px-4 py-2 dark:border-orange-900 dark:bg-orange-950">
+            <span className="text-sm font-semibold text-orange-700 dark:text-orange-400">
               {myEvents.length} Events
             </span>
           </div>
@@ -131,24 +131,24 @@ const MyKindoraPage = () => {
 
         {/* Empty State */}
         {myEvents.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-20 text-center dark:border-gray-700 dark:bg-gray-900">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-20 text-center dark:border-slate-700 dark:bg-slate-900">
 
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-orange-600 dark:bg-orange-950">
               <CalendarDays size={30} />
             </div>
 
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               No Events Yet!
             </h2>
 
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500 dark:text-gray-400">
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
               You haven't created any events yet. Create your first event and
               start making a difference in your community.
             </p>
 
             <Link
-              href="/create-kindora"
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              href="/create-event"
+              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-orange-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-700"
             >
               <Plus size={18} />
               Create Your First Event
@@ -163,7 +163,7 @@ const MyKindoraPage = () => {
             {myEvents.map((event) => (
               <div
                 key={event._id}
-                className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-emerald-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-emerald-900"
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:border-orange-200 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-900"
               >
 
                 {/* Image */}
@@ -177,7 +177,7 @@ const MyKindoraPage = () => {
                   />
 
                   {/* Category Badge */}
-                  <span className="absolute left-4 top-4 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm">
+                  <span className="absolute left-4 top-4 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-orange-700 shadow-sm">
                     {event.eventType}
                   </span>
 
@@ -187,12 +187,12 @@ const MyKindoraPage = () => {
                 <div className="p-5">
 
                   {/* Title */}
-                  <h2 className="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white">
+                  <h2 className="line-clamp-1 text-lg font-bold text-slate-900 dark:text-white">
                     {event.title}
                   </h2>
 
                   {/* Description */}
-                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-gray-500 dark:text-gray-400">
+                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-slate-500 dark:text-slate-400">
                     {event.description}
                   </p>
 
@@ -202,16 +202,16 @@ const MyKindoraPage = () => {
                     {/* Location */}
                     <div className="flex items-center gap-3">
 
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-950">
                         <MapPin size={17} />
                       </div>
 
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-slate-400">
                           Location
                         </p>
 
-                        <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-200">
+                        <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
                           {event.location}
                         </p>
                       </div>
@@ -221,16 +221,16 @@ const MyKindoraPage = () => {
                     {/* Date */}
                     <div className="flex items-center gap-3">
 
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-950">
                         <CalendarDays size={17} />
                       </div>
 
                       <div>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-slate-400">
                           Event Date
                         </p>
 
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                           {new Date(event.eventDate).toLocaleDateString("en-GB")}
                         </p>
                       </div>
@@ -240,7 +240,7 @@ const MyKindoraPage = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-5 flex gap-3 border-t border-gray-100 pt-4 dark:border-gray-800">
+                  <div className="mt-5 flex gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
 
                     <div className="flex-1">
                       <EditKindoraDialog

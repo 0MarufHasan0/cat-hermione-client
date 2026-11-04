@@ -2,6 +2,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { ArrowRightIcon, CalendarDaysIcon, SlidersHorizontalIcon } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { EventCards } from "./eventcard";
 
 type Event = {
@@ -36,26 +40,15 @@ const UpcomingEvent = () => {
   // Event data
   const [eventData, setEventData] = useState<Event[]>([]);
 
-  // console.log("1. Current Category:", category);
-
   // API call
   useEffect(() => {
-    // console.log("2. useEffect Started!");
-    // console.log("3. Selected Category:", category);
-
     const getEvents = async () => {
       const apiUrl = category
         ? `http://localhost:8000/events?category=${encodeURIComponent(category)}`
         : "http://localhost:8000/events";
 
-      // console.log("4. API URL:", apiUrl);
-
       const res = await fetch(apiUrl);
-      // console.log("5. API Response Status:", res.status);
-
       const data = await res.json();
-
-      // console.log("6. Received Data:", data);
 
       setEventData(data);
     };
@@ -63,56 +56,157 @@ const UpcomingEvent = () => {
     getEvents();
   }, [category]);
 
-  // console.log("7. Event Data:", eventData);
-
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <section className="relative isolate overflow-hidden bg-white py-16 sm:py-20 lg:py-24 dark:bg-slate-950">
+      {/* Background Decorations */}
 
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Upcoming Events
-        </h2>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-32 top-20 -z-10 size-80 rounded-full bg-orange-100/60 blur-3xl dark:bg-orange-500/5"
+      />
 
-        <p className="mt-2 text-muted-foreground">
-          Discover events and join us to make a difference.
-        </p>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-32 bottom-0 -z-10 size-72 rounded-full bg-orange-50 blur-3xl dark:bg-orange-500/5"
+      />
+
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        {/* Section Header */}
+
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <Badge
+              variant="outline"
+              className="rounded-full border-orange-200 bg-orange-50 px-4 py-1.5 text-[10px] font-bold tracking-[0.15em] text-orange-700 uppercase dark:border-orange-500/30 dark:bg-orange-500/10 dark:text-orange-400"
+            >
+              Make a Difference
+            </Badge>
+
+            <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl dark:text-white">
+              Upcoming{" "}
+              <span className="text-orange-600 dark:text-orange-400">
+                Events
+              </span>
+            </h2>
+
+            <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base dark:text-slate-400">
+              Discover meaningful events, connect with passionate volunteers,
+              and take part in building a kinder community with Kindora.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-fit rounded-full border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 dark:border-orange-500/30 dark:text-orange-400 dark:hover:bg-orange-500/10"
+            onClick={() => setCategory("")}
+          >
+            <SlidersHorizontalIcon className="size-4" />
+            All Events
+          </Button>
+        </div>
+
+        {/* Category Filter */}
+
+        <div className="mt-8">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400">
+              <SlidersHorizontalIcon className="size-4" />
+            </span>
+
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              Explore by Category
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap gap-2.5">
+            <Button
+              variant="outline"
+              onClick={() => setCategory("")}
+              className={`rounded-full px-4 transition-all ${
+                category === ""
+                  ? "border-orange-600 bg-orange-600 text-white hover:bg-orange-700 hover:text-white"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-orange-500/30 dark:hover:bg-orange-500/10 dark:hover:text-orange-400"
+              }`}
+            >
+              All Events
+            </Button>
+
+            {eventTypes.map((type) => (
+              <Button
+                key={type}
+                variant="outline"
+                onClick={() => setCategory(type)}
+                className={`rounded-full px-4 transition-all ${
+                  category === type
+                    ? "border-orange-600 bg-orange-600 text-white hover:bg-orange-700 hover:text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-orange-500/30 dark:hover:bg-orange-500/10 dark:hover:text-orange-400"
+                }`}
+              >
+                {type}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Selected Category */}
+
+        {category && (
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-orange-100 bg-orange-50/70 px-4 py-3 dark:border-orange-500/20 dark:bg-orange-500/5">
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              Showing events in{" "}
+              <span className="font-bold text-orange-700 dark:text-orange-400">
+                {category}
+              </span>
+            </p>
+
+            <button
+              onClick={() => setCategory("")}
+              className="text-sm font-semibold text-orange-700 transition-colors hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300"
+            >
+              Clear filter
+            </button>
+          </div>
+        )}
+
+        {/* Event Cards */}
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {eventData.slice(0, 6).map((event) => (
+            <EventCards key={event._id} event={event} />
+          ))}
+        </div>
+
+        {/* Empty State */}
+
+        {eventData.length === 0 && (
+          <div className="mt-8 flex flex-col items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-14 text-center dark:border-slate-700 dark:bg-slate-900/50">
+            <span className="flex size-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400">
+              <CalendarDaysIcon className="size-7" />
+            </span>
+
+            <h3 className="mt-5 text-lg font-bold text-slate-900 dark:text-white">
+              No Events Found
+            </h3>
+
+            <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-400">
+              {category
+                ? `There are no events in the "${category}" category right now. Try another category.`
+                : "There are no upcoming events available right now. Please check back later."}
+            </p>
+
+            {category && (
+              <Button
+                onClick={() => setCategory("")}
+                className="mt-5 rounded-full bg-orange-600 px-5 text-white hover:bg-orange-700"
+              >
+                View All Events
+                <ArrowRightIcon className="ml-1 size-4" />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
-
-      {/* Category Buttons */}
-      <div className="flex flex-wrap gap-3 mb-8">
-  <button
-    onClick={() => setCategory("")}
-    className={`px-4 py-2 rounded-md ${
-      category === ""
-        ? "bg-black text-white"
-        : "bg-gray-200 text-black"
-    }`}
-  >
-    All Events
-  </button>
-
-  {eventTypes.map((type) => (
-    <button
-      key={type}
-      onClick={() => setCategory(type)}
-      className={`px-4 py-2 rounded-md ${
-        category === type
-          ? "bg-black text-white"
-          : "bg-gray-200 text-black"
-      }`}
-    >
-      {type}
-    </button>
-  ))}
-</div>
-      {/* Event Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {eventData.slice(0, 6).map((event) => (
-          <EventCards key={event._id} event={event} />
-        ))}
-      </div>
-
-    </div>
+    </section>
   );
 };
 
