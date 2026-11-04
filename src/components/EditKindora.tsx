@@ -26,6 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "@/lib/api";
 
 const EVENT_TYPES = [
   "Cleanup",
@@ -66,7 +67,7 @@ const EditKindoraDialog = ({
 
     const router = useRouter();
 
-  const [eventType, setEventType] = useState("");
+  const [eventType, setEventType] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -93,7 +94,7 @@ const EditKindoraDialog = ({
       eventDate: formData.get("eventDate"),
     };
 
-    const res = await fetch(`http://localhost:8000/kindora/${id}`, {
+    const res = await fetch(apiUrl(`/kindora/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -123,12 +124,14 @@ const EditKindoraDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Pencil size={16} />
-          Edit
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="outline">
+            <Pencil size={16} />
+            Edit
+          </Button>
+        }
+      />
 
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>

@@ -7,6 +7,9 @@ import { ArrowRightIcon, CalendarDaysIcon, SlidersHorizontalIcon } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EventCards } from "./eventcard";
+import { EventGridSkeleton } from "@/components/event-skeletons";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
 
 type Event = {
   _id: string;
@@ -39,18 +42,33 @@ const UpcomingEvent = () => {
 
   // Event data
   const [eventData, setEventData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // API call
   useEffect(() => {
     const getEvents = async () => {
-      const apiUrl = category
-        ? `http://localhost:8000/events?category=${encodeURIComponent(category)}`
-        : "http://localhost:8000/events";
+      try {
+        setLoading(true);
 
-      const res = await fetch(apiUrl);
-      const data = await res.json();
+        const apiUrlWithCategory = category
+          ? apiUrl(`/events?category=${encodeURIComponent(category)}`)
+          : apiUrl("/events");
 
-      setEventData(data);
+        const res = await fetch(apiUrlWithCategory);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch events");
+        }
+
+        const data = await res.json();
+
+        setEventData(data);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load events. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
 
     getEvents();
@@ -170,15 +188,21 @@ const UpcomingEvent = () => {
 
         {/* Event Cards */}
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {eventData.slice(0, 6).map((event) => (
-            <EventCards key={event._id} event={event} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="mt-8">
+            <EventGridSkeleton />
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {eventData.slice(0, 6).map((event) => (
+              <EventCards key={event._id} event={event} />
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
 
-        {eventData.length === 0 && (
+        {!loading && eventData.length === 0 && (
           <div className="mt-8 flex flex-col items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-14 text-center dark:border-slate-700 dark:bg-slate-900/50">
             <span className="flex size-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400">
               <CalendarDaysIcon className="size-7" />

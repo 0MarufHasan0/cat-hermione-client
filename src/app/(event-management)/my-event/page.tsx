@@ -15,6 +15,10 @@ import Image from "next/image";
 
 import DeleteKindoraDialog from "@/components/DeleteKindora";
 import EditKindoraDialog from "@/components/EditKindora";
+import { EventGridSkeleton } from "@/components/event-skeletons";
+import { Skeleton } from "@/components/ui/skeleton";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
 
 type Event = {
   _id: string;
@@ -44,7 +48,7 @@ const MyKindoraPage = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/my-kindora/${encodeURIComponent(email)}`
+          apiUrl(`/my-kindora/${encodeURIComponent(email)}`)
         );
 
         if (!response.ok) {
@@ -55,6 +59,7 @@ const MyKindoraPage = () => {
         setMyEvents(data);
       } catch (error) {
         console.error(error);
+        toast.error("Failed to load your events.");
       } finally {
         setLoading(false);
       }
@@ -65,15 +70,30 @@ const MyKindoraPage = () => {
 
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-orange-100 border-t-orange-600" />
+      <section className="min-h-screen bg-slate-50 px-4 py-12 dark:bg-slate-950 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:p-8">
+            <div className="w-full space-y-3">
+              <Skeleton className="h-9 w-44" />
+              <Skeleton className="h-4 w-full max-w-md" />
+              <Skeleton className="h-3 w-56" />
+            </div>
 
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            Loading your events...
-          </p>
+            <Skeleton className="h-11 w-44 shrink-0 rounded-lg" />
+          </div>
+
+          <div className="mb-6 flex items-center justify-between">
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-36" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+
+            <Skeleton className="h-10 w-24 rounded-lg" />
+          </div>
+
+          <EventGridSkeleton />
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -142,7 +162,7 @@ const MyKindoraPage = () => {
             </h2>
 
             <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
-              You haven't created any events yet. Create your first event and
+              You haven&apos;t created any events yet. Create your first event and
               start making a difference in your community.
             </p>
 

@@ -29,5 +29,9 @@ Next.js 16 (App Router) + React 19 + TypeScript, in `src/`. No tests, no CI, no 
 ## Layout / conventions
 - Path alias `@/*` → `src/*` (`tsconfig.json`).
 - `src/components/ui/` is generated/vendor shadcn code — don't restructure or restyle these files; they use `data-slot` attributes.
-- App pages live in `src/app/`; Server Components by default, `"use client"` only where needed.
+- App pages live in `src/app/`; route groups like `(auth)`, `(event-management)` don't affect URLs. Server Components by default, `"use client"` only where needed.
 - Keep changes small and beginner-simple; don't add packages or abstractions the task doesn't require. Forms: `Object.fromEntries(new FormData(event.currentTarget).entries())`, minimal validation.
+
+## Auth / protection
+- Auth: better-auth (MongoDB adapter) in `src/lib/auth.ts`, client in `src/lib/auth-client.ts`.
+- Route protection: `src/proxy.ts` (Next.js 16 proxy) checks session via `getSessionCookie` from `better-auth/cookies` and redirects unauthenticated users to `/sign-in`. Protected routes are defined in `config.matcher`.

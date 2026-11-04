@@ -4,6 +4,9 @@
 import React, { useEffect, useState } from "react";
 import { EventCards } from "@/components/eventcard";
 import { SlidersHorizontal, CalendarDays } from "lucide-react";
+import { EventGridSkeleton } from "@/components/event-skeletons";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
 
 type Event = {
   _id: string;
@@ -36,18 +39,33 @@ const UpcomingEvent = () => {
 
   // Event data
   const [eventData, setEventData] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // API call
   useEffect(() => {
     const getEvents = async () => {
-      const apiUrl = category
-        ? `http://localhost:8000/events?category=${encodeURIComponent(category)}`
-        : "http://localhost:8000/events";
+      try {
+        setLoading(true);
 
-      const res = await fetch(apiUrl);
-      const data = await res.json();
+        const apiUrlWithCategory = category
+          ? apiUrl(`/events?category=${encodeURIComponent(category)}`)
+          : apiUrl("/events");
 
-      setEventData(data);
+        const res = await fetch(apiUrlWithCategory);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch events");
+        }
+
+        const data = await res.json();
+
+        setEventData(data);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load events. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
 
     getEvents();
@@ -138,11 +156,15 @@ const UpcomingEvent = () => {
         )}
 
         {/* Event Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {eventData.map((event) => (
-            <EventCards key={event._id} event={event} />
-          ))}
-        </div>
+        {loading ? (
+          <EventGridSkeleton count={9} />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {eventData.map((event) => (
+              <EventCards key={event._id} event={event} />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 import {
   Heart,
@@ -235,9 +236,11 @@ export function Navbar() {
 
     if (error) {
       console.error(error.message);
+      toast.error("Failed to log out. Please try again.");
       return;
     }
 
+    toast.success("Logged out successfully.");
     router.push("/sign-in");
   };
 

@@ -74,6 +74,18 @@ const SignUpPage = () => {
     }
   };
 
+const handleGoogleSignUp = async () => {
+  const { error } = await authClient.signIn.social({
+    provider: "google",
+    callbackURL: "/",
+    errorCallbackURL: "/sign-up",
+  });
+
+  if (error) {
+    toast.error(error.message);
+  }
+};
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-950">
 
@@ -234,13 +246,9 @@ const SignUpPage = () => {
             type="button"
             variant="outline"
             className="h-11 w-full gap-3 border-slate-200 font-semibold text-slate-700 transition hover:border-orange-200 hover:bg-orange-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-            onClick={async () => {
-              await authClient.signIn.social({
-                provider: "google",
-                callbackURL: "/",
-              });
-            }}
+            onClick={handleGoogleSignUp}
           >
+          
             <svg viewBox="0 0 48 48" className="h-5 w-5">
               <path
                 fill="#EA4335"

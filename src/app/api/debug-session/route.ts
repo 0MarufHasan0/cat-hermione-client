@@ -8,7 +8,9 @@ export async function GET() {
       headers: await headers(),
     });
     return NextResponse.json({ session });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message });
+  } catch (e) {
+    return NextResponse.json({
+      error: e instanceof Error ? e.message : "Unknown error",
+    });
   }
 }

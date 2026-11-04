@@ -5,6 +5,10 @@ import Image from "next/image";
 import { CalendarDays, MapPin, XCircle } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
+import { EventGridSkeleton } from "@/components/event-skeletons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type JoinedEvent = {
   _id: string;
@@ -36,7 +40,7 @@ const JoinEventPage = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:8000/joined-event/${encodeURIComponent(email)}`
+          apiUrl(`/joined-event/${encodeURIComponent(email)}`)
         );
 
         if (!response.ok) {
@@ -47,6 +51,7 @@ const JoinEventPage = () => {
         setJoinedEvents(data);
       } catch (error) {
         console.error(error);
+        toast.error("Failed to load joined events.");
       } finally {
         setLoading(false);
       }
@@ -61,7 +66,7 @@ const JoinEventPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/joined-event/${id}`,
+        apiUrl(`/joined-event/${id}`),
         {
           method: "DELETE",
           headers: {
@@ -76,22 +81,30 @@ const JoinEventPage = () => {
       }
 
       setJoinedEvents((prev) => prev.filter((event) => event._id !== id));
+      toast.success("Event cancelled successfully.");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to cancel event. Please try again.");
     }
   };
 
   if (isPending || loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-orange-100 border-t-orange-600" />
+      <section className="min-h-screen bg-slate-50 px-4 py-12 dark:bg-slate-950 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:p-8">
+            <div className="w-full space-y-3">
+              <Skeleton className="h-9 w-48" />
+              <Skeleton className="h-4 w-full max-w-md" />
+              <Skeleton className="h-3 w-56" />
+            </div>
 
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            Loading your joined events...
-          </p>
+            <Skeleton className="h-10 w-24 shrink-0 rounded-lg" />
+          </div>
+
+          <EventGridSkeleton />
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -137,7 +150,7 @@ const JoinEventPage = () => {
             </h2>
 
             <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
-              You haven't joined any events yet. Browse upcoming events and
+              You haven&apos;t joined any events yet. Browse upcoming events and
               join one to see it here.
             </p>
 

@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { apiUrl } from "@/lib/api";
  import { toast } from 'react-toastify';
 
 
@@ -20,23 +21,30 @@ import { redirect } from "next/navigation";
 const DeleteKindoraDialog = ({id , email} : {id : string, email : string}) => {
 
     const handleDeleteKindora = async() => {
-       const res = await fetch (`http://localhost:8000/kindora/${id}`,{
-        method : "DELETE" ,
+      try {
+        const res = await fetch (apiUrl(`/kindora/${id}`),{
+          method : "DELETE" ,
 
-        // optional: if you want to send the email in the request body
-         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      }
-    )
+          // optional: if you want to send the email in the request body
+           headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      )
 
-       const data = await res.json()
+        const data = await res.json()
 
-       if(data.deletedCount === 1){
+        if(!res.ok || data.deletedCount !== 1){
+          throw new Error(data.message || "Event deletion failed")
+        }
+
         toast.success("Event deleted successfully")
-    
-       }
+      } catch (error) {
+        console.error(error)
+        toast.error("Failed to delete event. Please try again.")
+        return
+      }
 
 
     //    console.log(data)

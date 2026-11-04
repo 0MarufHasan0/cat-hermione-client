@@ -2,6 +2,8 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
 
 type JoinEventButtonProps = {
   event: {
@@ -17,7 +19,10 @@ const JoinEventButton = ({ event }: JoinEventButtonProps) => {
   const user = session?.user;
 
   const handleJoinEvent = async () => {
-    if (!user) return;
+    if (!user) {
+      toast.error("Please sign in to join this event.");
+      return;
+    }
 
     const { _id, ...eventDetails } = event;
 
@@ -30,17 +35,27 @@ const JoinEventButton = ({ event }: JoinEventButtonProps) => {
       joinedAt: new Date(),
     };
 
-    const res = await fetch("http://localhost:8000/join-event", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(joinData),
-    });
+    try {
+      const res = await fetch(apiUrl("/join-event"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(joinData),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    console.log(result);
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to join event");
+      }
+
+      toast.success("You have joined the event!");
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to join event. Please try again.");
+    }
   };
 
   return (

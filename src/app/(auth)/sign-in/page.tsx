@@ -56,7 +56,24 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     toast.success("Login successful!");
     console.log("Sign-in successful:", data);
   }
+  
 };
+
+ const handleGoogleSignUp = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success("Google login success");
+  }
+
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-950">
@@ -208,11 +225,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           {/* Google Login */}
           <Button
             type="button"
+        
             variant="outline"
             className="h-11 w-full gap-3 border-slate-200 font-semibold text-slate-700 transition hover:border-orange-200 hover:bg-orange-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-            onClick={() => {
-              // Add Google Login here
-            }}
+            onClick={()=>handleGoogleSignUp()}
           >
             <svg viewBox="0 0 48 48" className="h-5 w-5">
               <path
@@ -238,7 +254,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
           {/* Sign Up Link */}
           <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
 
             <Link
               href="/sign-up"

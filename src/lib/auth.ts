@@ -13,12 +13,14 @@ export const auth = betterAuth({
    emailAndPassword: { 
     enabled: true, 
   }, 
+// google social login configuration
+ socialProviders: {
+        google: { 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+        }, 
 
-  google: {
-    enabled: true,
-    clientId: process.env.GOOGLE_CLIENT_ID as string,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-  },
+      },
 
   
 

@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { authClient } from "@/lib/auth-client";
+import { apiUrl } from "@/lib/api";
+import { toast } from "react-toastify";
 
 const EVENT_TYPES = [
   "Cleanup",
@@ -73,6 +75,7 @@ export function CreateEventForm() {
         type: "error",
         text: "Please choose an event type.",
       });
+      toast.error("Please choose an event type.");
       return;
     }
 
@@ -84,6 +87,7 @@ export function CreateEventForm() {
         type: "error",
         text: "Please select today or a future event date.",
       });
+      toast.error("Please select today or a future event date.");
       return;
     }
 
@@ -98,7 +102,7 @@ export function CreateEventForm() {
       };
 
       // Backend API call
-      const res = await fetch("http://localhost:8000/add-kindora", {
+      const res = await fetch(apiUrl("/add-kindora"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,6 +122,7 @@ export function CreateEventForm() {
         type: "success",
         text: "Event created successfully!",
       });
+      toast.success("Event created successfully!");
 
       // Form reset
       form.reset();
@@ -130,6 +135,7 @@ export function CreateEventForm() {
         type: "error",
         text: "Something went wrong. Please try again.",
       });
+      toast.error("Something went wrong. Please try again.");
 
     } finally {
       setLoading(false);

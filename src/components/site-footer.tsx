@@ -1,6 +1,5 @@
 
 import {
-  CatIcon,
   HeartIcon,
   CameraIcon,
   CodeIcon,
