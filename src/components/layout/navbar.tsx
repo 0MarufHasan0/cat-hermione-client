@@ -50,9 +50,9 @@ import {
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Upcoming Events", href: "/upcoming-events" },
-  { label: "About Us", href: "/about" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Contact", href: "/contact" },
+  // { label: "About Us", href: "/about" },
+  // { label: "Gallery", href: "/gallery" },
+  // { label: "Contact", href: "/contact" },
 ];
 
 const PROFILE_LINKS = [

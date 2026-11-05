@@ -60,6 +60,7 @@ const UpcomingEvent = () => {
         ? apiUrl(`/events?category=${encodeURIComponent(category)}&limit=6`)
         : apiUrl("/events?limit=6");
 
+      // The /events endpoint is JWT-protected, so this header is required.
       const token = await getTokenFromClient();
 
       const res = await fetch(apiUrlWithCategory, {

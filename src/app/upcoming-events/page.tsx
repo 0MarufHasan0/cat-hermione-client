@@ -51,13 +51,14 @@ const UpcomingEvent = () => {
           ? apiUrl(`/events?category=${encodeURIComponent(category)}`)
           : apiUrl("/events");
 
-           const token = await getTokenFromClient();
-       
-             const res = await fetch(apiUrlWithCategory, {
-               headers: {
-                 Authorization: `Bearer ${token}`,
-               },
-             });
+          // The /events endpoint is JWT-protected, so this header is required.
+          const token = await getTokenFromClient();
+
+          const res = await fetch(apiUrlWithCategory, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
         if (!res.ok) {
           throw new Error("Failed to fetch events");
