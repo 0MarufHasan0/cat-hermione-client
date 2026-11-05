@@ -18,7 +18,6 @@ import EditKindoraDialog from "@/components/EditKindora";
 import { EventGridSkeleton } from "@/components/event-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiUrl } from "@/lib/api";
-import { toast } from "react-toastify";
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Event = {
@@ -66,7 +65,6 @@ const MyKindoraPage = () => {
         setMyEvents(data);
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load your events.");
       } finally {
         setLoading(false);
       }

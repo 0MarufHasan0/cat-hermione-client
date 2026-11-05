@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { EventCards } from "./eventcard";
 import { EventGridSkeleton } from "@/components/event-skeletons";
 import { apiUrl } from "@/lib/api";
-import { toast } from "react-toastify";
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Event = {
@@ -78,7 +77,6 @@ const UpcomingEvent = () => {
       setEventData(data);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to load events. Please try again.");
     } finally {
       setLoading(false);
     }

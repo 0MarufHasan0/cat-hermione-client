@@ -59,7 +59,6 @@ const JoinEventPage = () => {
         setJoinedEvents(data);
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load joined events.");
       } finally {
         setLoading(false);
       }
