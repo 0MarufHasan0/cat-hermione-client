@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, Cat } from "lucide-react";
+import { ArrowLeft, CalendarDays, HeartHandshake } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Page Not Found | Kindora",
+  title: "Page Not Found",
 };
 
 export default function NotFound() {
@@ -12,7 +12,7 @@ export default function NotFound() {
     <section className="flex min-h-[70vh] items-center justify-center bg-slate-50 px-4 py-16 dark:bg-slate-950">
       <div className="mx-auto max-w-lg text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-orange-100 text-orange-600 dark:bg-orange-950 dark:text-orange-400">
-          <Cat size={40} />
+          <HeartHandshake size={40} />
         </div>
 
         <p className="mt-8 text-sm font-bold tracking-[0.2em] text-orange-600 uppercase dark:text-orange-400">

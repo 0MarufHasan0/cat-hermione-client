@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Kindora">
+  <defs>
+    <linearGradient id="kindora-gradient" x1="4" y1="2" x2="60" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fb923c" />
+      <stop offset="0.55" stop-color="#f97316" />
+      <stop offset="1" stop-color="#ea580c" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="15" fill="url(#kindora-gradient)" />
+  <rect x="2" y="2" width="60" height="60" rx="13.5" fill="none" stroke="#ffffff" stroke-opacity="0.24" stroke-width="1.5" />
+
+  <path
+    d="M32 52.4c-1 0-1.95-.35-2.7-1L14.5 38.6C11.5 35.9 10 32.6 10 29.1c0-6.8 5.4-12.3 12.2-12.3 3.7 0 7.2 1.7 9.8 4.8 2.6-3.1 6.1-4.8 9.8-4.8 6.8 0 12.2 5.5 12.2 12.3 0 3.5-1.5 6.8-4.5 9.5L34.7 51.4c-.75.65-1.7 1-2.7 1z"
+    fill="#ffffff"
+  />
+</svg>
