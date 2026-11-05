@@ -7,6 +7,7 @@ import { SlidersHorizontal, CalendarDays } from "lucide-react";
 import { EventGridSkeleton } from "@/components/event-skeletons";
 import { apiUrl } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Event = {
   _id: string;
@@ -51,7 +52,13 @@ const UpcomingEvent = () => {
           ? apiUrl(`/events?category=${encodeURIComponent(category)}`)
           : apiUrl("/events");
 
-        const res = await fetch(apiUrlWithCategory);
+           const token = await getTokenFromClient();
+       
+             const res = await fetch(apiUrlWithCategory, {
+               headers: {
+                 Authorization: `Bearer ${token}`,
+               },
+             });
 
         if (!res.ok) {
           throw new Error("Failed to fetch events");

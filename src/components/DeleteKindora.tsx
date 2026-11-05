@@ -15,12 +15,15 @@ import { Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { apiUrl } from "@/lib/api";
  import { toast } from 'react-toastify';
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 
 
 const DeleteKindoraDialog = ({id , email} : {id : string, email : string}) => {
 
     const handleDeleteKindora = async() => {
+
+      const token = await getTokenFromClient()
       try {
         const res = await fetch (apiUrl(`/kindora/${id}`),{
           method : "DELETE" ,
@@ -28,6 +31,7 @@ const DeleteKindoraDialog = ({id , email} : {id : string, email : string}) => {
           // optional: if you want to send the email in the request body
            headers: {
             "Content-Type": "application/json",
+            authorization : `bearer ${token}`
           },
           body: JSON.stringify({ email }),
         }

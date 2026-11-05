@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { apiUrl } from "@/lib/api";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const EVENT_TYPES = [
   "Cleanup",
@@ -94,10 +95,13 @@ const EditKindoraDialog = ({
       eventDate: formData.get("eventDate"),
     };
 
+    const token = await getTokenFromClient()
+
     const res = await fetch(apiUrl(`/kindora/${id}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        authorization : `bearer ${token}`
       },
       body: JSON.stringify({
         email,

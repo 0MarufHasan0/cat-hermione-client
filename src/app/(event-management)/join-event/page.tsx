@@ -9,6 +9,7 @@ import { apiUrl } from "@/lib/api";
 import { toast } from "react-toastify";
 import { EventGridSkeleton } from "@/components/event-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type JoinedEvent = {
   _id: string;
@@ -38,9 +39,16 @@ const JoinEventPage = () => {
         return;
       }
 
+      const token = await getTokenFromClient()
+
       try {
         const response = await fetch(
-          apiUrl(`/joined-event/${encodeURIComponent(email)}`)
+          apiUrl(`/joined-event/${encodeURIComponent(email)}`),
+          {
+            headers : {
+              authorization : `bearer ${token}`
+            }
+          }
         );
 
         if (!response.ok) {
@@ -64,6 +72,8 @@ const JoinEventPage = () => {
   const handleCancel = async (id: string) => {
     if (!email) return;
 
+    const token = await getTokenFromClient()
+
     try {
       const response = await fetch(
         apiUrl(`/joined-event/${id}`),
@@ -71,6 +81,9 @@ const JoinEventPage = () => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            authorization : `bearer ${token}`
+
+
           },
           body: JSON.stringify({ email }),
         }

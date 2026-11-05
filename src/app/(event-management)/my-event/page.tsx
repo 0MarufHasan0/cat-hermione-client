@@ -19,6 +19,7 @@ import { EventGridSkeleton } from "@/components/event-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiUrl } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Event = {
   _id: string;
@@ -46,9 +47,15 @@ const MyKindoraPage = () => {
         return;
       }
 
+      const token = await getTokenFromClient()
+
       try {
         const response = await fetch(
-          apiUrl(`/my-kindora/${encodeURIComponent(email)}`)
+          apiUrl(`/my-kindora/${encodeURIComponent(email)}`),{
+            headers : {
+              authorization : `bearer ${token}`
+            }
+          }
         );
 
         if (!response.ok) {

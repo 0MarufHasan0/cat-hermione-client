@@ -17,6 +17,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { apiUrl } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const EVENT_TYPES = [
   "Cleanup",
@@ -101,11 +102,15 @@ export function CreateEventForm() {
         creatorEmail: user?.email,
       };
 
+      const token = await getTokenFromClient()
+
+
       // Backend API call
       const res = await fetch(apiUrl("/add-kindora"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization : `bearer ${token}`
         },
         body: JSON.stringify(eventData),
       });

@@ -1,12 +1,13 @@
 
 import JoinEventButton from "@/components/JoinEventButton";
-import { auth } from "@/lib/auth";
+
 import { apiUrl } from "@/lib/api";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
-import { headers } from "next/headers";
+
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const EventDetailsPage = async ({
   params,
@@ -17,9 +18,8 @@ const EventDetailsPage = async ({
 
   // Get the session from the server jwt token
 
-  const jwtToken= await auth.api.getToken({
-   headers : await headers() // you need to pass the headers object.
-  })
+  const token = await getTokenFromServer()
+
 
   // console.log("Token from server:", jwtToken.token);
 
@@ -27,7 +27,7 @@ const EventDetailsPage = async ({
 
     headers : {
 
-      authorization: `Bearer ${jwtToken?.token}` // Pass the token in the Authorization header
+      authorization: `Bearer ${token}` // Pass the token in the Authorization header
     } 
 });
 

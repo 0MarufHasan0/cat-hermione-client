@@ -1,8 +1,12 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ArrowRightIcon, CalendarDaysIcon, SlidersHorizontalIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowRightIcon,
+  CalendarDaysIcon,
+  SlidersHorizontalIcon,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +14,7 @@ import { EventCards } from "./eventcard";
 import { EventGridSkeleton } from "@/components/event-skeletons";
 import { apiUrl } from "@/lib/api";
 import { toast } from "react-toastify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Event = {
   _id: string;
@@ -37,6 +42,8 @@ const eventTypes = [
 ];
 
 const UpcomingEvent = () => {
+  const router = useRouter();
+
   // Selected category
   const [category, setCategory] = useState("");
 
@@ -45,37 +52,44 @@ const UpcomingEvent = () => {
   const [loading, setLoading] = useState(true);
 
   // API call
-  useEffect(() => {
-    const getEvents = async () => {
-      try {
-        setLoading(true);
+ useEffect(() => {
+  const getEvents = async () => {
+    try {
+      setLoading(true);
 
-        const apiUrlWithCategory = category
-          ? apiUrl(`/events?category=${encodeURIComponent(category)}`)
-          : apiUrl("/events");
+      const apiUrlWithCategory = category
+        ? apiUrl(`/events?category=${encodeURIComponent(category)}&limit=6`)
+        : apiUrl("/events?limit=6");
 
-        const res = await fetch(apiUrlWithCategory);
+      const token = await getTokenFromClient();
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch events");
-        }
+      const res = await fetch(apiUrlWithCategory, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = await res.json();
-
-        setEventData(data);
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to load events. Please try again.");
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error("Failed to fetch events");
       }
-    };
 
-    getEvents();
-  }, [category]);
+      const data = await res.json();
+
+      setEventData(data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load events. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  getEvents();
+}, [category]);
 
   return (
     <section className="relative isolate overflow-hidden bg-white py-16 sm:py-20 lg:py-24 dark:bg-slate-950">
+
       {/* Background Decorations */}
 
       <div
@@ -89,6 +103,7 @@ const UpcomingEvent = () => {
       />
 
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+
         {/* Section Header */}
 
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -113,10 +128,12 @@ const UpcomingEvent = () => {
             </p>
           </div>
 
+          {/* All Events - Navigate to Upcoming Events Page */}
+
           <Button
             variant="outline"
             className="w-fit rounded-full border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 dark:border-orange-500/30 dark:text-orange-400 dark:hover:bg-orange-500/10"
-            onClick={() => setCategory("")}
+            onClick={() => router.push("/upcoming-events")}
           >
             <SlidersHorizontalIcon className="size-4" />
             All Events
@@ -137,6 +154,9 @@ const UpcomingEvent = () => {
           </div>
 
           <div className="flex flex-wrap gap-2.5">
+
+            {/* Category Filter All Events Button */}
+
             <Button
               variant="outline"
               onClick={() => setCategory("")}
@@ -148,6 +168,8 @@ const UpcomingEvent = () => {
             >
               All Events
             </Button>
+
+            {/* Category Buttons */}
 
             {eventTypes.map((type) => (
               <Button
@@ -194,7 +216,7 @@ const UpcomingEvent = () => {
           </div>
         ) : (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {eventData.slice(0, 6).map((event) => (
+            {eventData.map((event) => (
               <EventCards key={event._id} event={event} />
             ))}
           </div>
